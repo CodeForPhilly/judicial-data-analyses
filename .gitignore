@@ -1,6 +1,7 @@
 # data prep
+.Rproj.user
 code/data-prep/input/
-code/data-prep/output/hackathon-files.duckdb
+code/data-prep/output/jat-hackathon.duckdb
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
