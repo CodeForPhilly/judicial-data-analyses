@@ -1,4 +1,4 @@
-table_name,n,n_docket,n_otn
+table_name,n_rows,n_docket,n_otn
 cpcms_alias_data,2643219,767174,741411
 cpcms_attorney_data,4031373,1467912,1393788
 cpcms_bail_action_data,2161741,1359849,1290947
