@@ -84,7 +84,7 @@ tbl_stats <- # ~1 min
   pull(table_name) |> 
   map_dfr(
     .f =
-      ~tbl(con, .x) |> 
+      ~tbl(con, .x) |> # <--- duckdb 
       summarise(
         n_rows = n(),
         # TODO: soft code?
@@ -151,7 +151,7 @@ col_stat_prep <-
 col_stats <- # ~20s
   map_dfr(
     .x = col_stat_prep$query,
-    .f = ~dbGetQuery(conn = con, statement = .x)
+    .f = ~dbGetQuery(conn = con, statement = .x) # <--- duckdb
   ) |> 
   as_tibble()
 
@@ -277,6 +277,133 @@ col_stat_action |>
   
 ```
 
+```{r}
+
+column_network <- 
+  col_stat_action |> 
+  filter(
+    # str_detect(column_name, "docket"),
+    str_detect(action, "key")
+  ) |> 
+  mutate(
+    column_name = 
+      str_replace_all(
+        column_name, 
+        "(linked|originating|primary|related)_docket.*", 
+        "docket_number"
+      )
+  ) |> 
+  group_by(column_name) |> 
+  filter(n() >= 2) |> 
+  ungroup()
+
+
+column_network |> 
+  filter(column_name == "docket_number") |> 
+  group_by(table_name) |> 
+  filter(n_distinct == max(n_distinct)) |> 
+  ungroup() |> 
+  mutate(
+    facet = str_extract(table_name, "^[a-z]+") |> fct_rev(),
+    table_name = 
+      str_remove_all(table_name, "^[a-z]+_|_data") |> 
+      fct_reorder(n_distinct, max)
+  ) |> 
+  ggplot(aes(y = table_name)) +
+  geom_col(aes(x = n_with_data, fill = "total rows")) +
+  geom_col(aes(x = n_distinct, fill = "distinct docket #")) +
+  scale_fill_manual(values = c("cadetblue", "grey80")) +
+  scale_x_continuous(
+    expand = expansion(0),
+    labels = scales::number_format(scale_cut = scales::cut_short_scale())
+  ) +
+  facet_grid(
+    cols = vars(facet),
+    scales = "free",
+    space = "free"
+  ) +
+  theme(
+    text = element_text(color = "grey30"),
+    axis.ticks.y = element_blank(),
+    legend.position = "bottom",
+    panel.background = element_blank(),
+    plot.title.position = "plot"
+  ) +
+  labs(
+    title = "Unique docket number in relation to total records",
+    x = "# rows with docket number",
+    y = "table name",
+    fill = NULL
+  )
+
+ggsave("img/docket-number-distribution.png", width = 7, height = 4)
+```
+
+## Following one docket
+
+```{r}
+example_dockets <- 
+  dbGetQuery(
+    conn = con,
+    "select sd.docket_number
+    from 
+      cpcms_sentence_data             sd
+      inner join cpcms_financial_data cp on cp.otn = sd.otn
+      inner join cpcms_alias_data     al on al.otn = sd.otn
+    group by 1
+    limit 10"
+  )
+
+example_dockets |> 
+  knitr::kable()
+```
+
+|docket_number         |
+|:---------------------|
+|CP-22-CR-0001869-2021 |
+|CP-22-CR-0001875-2015 |
+|CP-22-CR-0001876-2018 |
+|CP-22-CR-0001881-2017 |
+|CP-22-CR-0001886-2018 |
+|CP-22-CR-0001887-2018 |
+|CP-22-CR-0001891-2016 |
+|CP-22-CR-0001893-2019 |
+|CP-22-CR-0001894-2018 |
+|CP-22-CR-0001896-2019 |
+
+```{r}
+docket_queries <- 
+  info_cols |> 
+  filter(
+    str_detect(table_name, "cpcms"),
+    column_name == "docket_number"
+  ) |> 
+  transmute(
+    table_name,
+    query = 
+      glue(
+        "select 
+         '{table_name}' as table_name,
+          * 
+        from {table_name} 
+        where docket_number = 'CP-22-CR-0001869-2021'"
+      ) |> 
+      as.character()
+  )
+
+docket_results <- 
+  map(
+    .x = set_names(docket_queries$query, docket_queries$table_name),
+    .f = 
+      ~dbGetQuery(con, .x) |> 
+      as_tibble() |> 
+      arrange()
+  )
+
+write_rds(docket_results, "output/docket_results.Rds")
+
+
+docket_results
 
 
 |> 
@@ -285,3 +412,12 @@ col_stat_action |>
       pivot_longer(
         cols = -c(table_name, docket_number, row_id),
       )
+```
+
+
+
+```{r}
+duckdb::duckdb_shutdown(duckdb())
+, "select * from cpms_sentence_data") |> head()
+```
+
