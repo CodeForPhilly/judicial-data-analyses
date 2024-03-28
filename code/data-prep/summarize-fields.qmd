@@ -405,13 +405,6 @@ write_rds(docket_results, "output/docket_results.Rds")
 
 docket_results
 
-
-|> 
-      arrange() |> 
-      mutate(row_id = row_number()) |> 
-      pivot_longer(
-        cols = -c(table_name, docket_number, row_id),
-      )
 ```
 
 
