@@ -1,4 +1,5 @@
 # data prep
+*.Rds
 .Rproj.user
 code/data-prep/input/
 code/data-prep/output/jat-hackathon.duckdb
