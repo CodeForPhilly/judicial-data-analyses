@@ -277,3 +277,11 @@ col_stat_action |>
   
 ```
 
+
+
+|> 
+      arrange() |> 
+      mutate(row_id = row_number()) |> 
+      pivot_longer(
+        cols = -c(table_name, docket_number, row_id),
+      )
