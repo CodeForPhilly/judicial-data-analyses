@@ -28,7 +28,7 @@ scrape_html <- function(title_number, overwrite = FALSE) {
   
   print(title_number)
   
-  csv_name <- glue("output/title-{title_number}.csv")
+  csv_name <- glue("csv-by-title/title-{title_number}.csv")
   
   # early exit
   if (file.exists(csv_name) && !overwrite) {
@@ -117,13 +117,12 @@ statute_urls |>
 # combine ----
 all_statutes <- 
   read_csv(
-    file = list.files("output", full.names = TRUE),
+    file = list.files("csv-by-title", full.names = TRUE),
     col_types = cols(.default = "c")
   )
 
 prep_statutes <- 
   all_statutes |> 
-  #
   mutate(
     section_number = str_extract(offense_section, "^\\d+"),
     section_text = ifelse(str_detect(offense_section, "\\."), NA, offense_text),
