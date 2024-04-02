@@ -237,3 +237,88 @@ info_cols |>
 # ---- disconnect ----
 duckdb::dbDisconnect(con, shutdown = TRUE)
 
+
+
+
+
+
+
+
+dbListFields(con, table_name)
+dbListTables(con)
+
+
+
+
+
+
+
+file_cols_list <-
+  map(
+    file_paths,
+    ~{
+      df <- read_n_lines(.x, 100)
+      tibble(
+        col_name = names(df),
+        class = sapply(df, class) |> map_chr(pluck, 1)
+      )
+    }
+  )
+
+file_cols <- 
+  list_rbind(
+    file_cols_list,
+    names_to = "file"
+  )
+
+
+column_overlap <- 
+  file_cols |> 
+  group_by(col_name) |> 
+  summarise(
+    n_table = n(),
+    n_class = n_distinct(class),
+    classes = paste(sort(unique(class)), collapse = ", ")
+  )
+    
+
+
+
+read_and_assign <- function(file_name, n = 50) {
+  obj_name <- 
+    basename(file_name) |> 
+    tools::file_path_sans_ext() |> 
+    janitor::make_clean_names()
+  
+  if (exists(obj_name, envir = globalenv()) && !overwrite) {
+    print("already exists")
+    return(invisible())
+  }
+  
+  df <- 
+    read_delim(file_name, delim = "|", n_max = n) |> 
+    as_tibble() |> 
+    janitor::clean_names()
+
+  assign(
+    x = obj_name, 
+    value = df, 
+    envir = env
+  )
+}
+
+
+
+walk(
+  file_paths, 
+  ~read_and_assign(.x)
+)
+
+
+duckdb_read_csv(
+  conn = con,
+  name = table_name,
+  files = file,
+  nrow.check = Inf,
+  delim = "|"
+)
