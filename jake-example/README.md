@@ -2,7 +2,7 @@
 * `SentenceData` has unique values in the field `SentenceConditions` but all other columns are repeated. It is recommended to remove these columns
 * The granularity of the `CaseData` tables is at the Docket Number level:
 
-![](code/quick-analysis/img/docket-number-distribution.png)
+![](quick-analysis/img/docket-number-distribution.png)
 
 
 ## Supplemental Data
@@ -16,9 +16,9 @@ This file has two sources:
 * [`statute_manual.csv`][csv-manual] has most of the unconsolidated statutes, some statute titles with very low counts have not been added and comes from [casetext.com][site-manual]
 
 
-[code-scrape]: code/data-prep/statutes/scrape-html.R
-[csv-manual]: code/data-prep/statutes/statute_manual.csv
-[csv-scrape]: code/data-prep/statutes/statute_webscrape.csv
+[code-scrape]: data-prep/statutes/scrape-html.R
+[csv-manual]: data-prep/statutes/statute_manual.csv
+[csv-scrape]: data-prep/statutes/statute_webscrape.csv
 [site-manual]: https://www.legis.state.pa.us/cfdocs/legis/LI/Public/cons_index.cfm
 [site-scrape]: https://www.legis.state.pa.us/cfdocs/legis/LI/Public/cons_index.cfm
 
@@ -35,15 +35,15 @@ This file has two sources:
 ### Analysis
 **Comparison of judges for one specific type of offense**
 
-![](code/quick-analysis/img/demographics-by-judge.png)
+![](quick-analysis/img/demographics-by-judge.png)
 
 **How the section hierarchy can be grouped into title / chapter**
 
-![](code/quick-analysis/img/treemap-all-offenses.png)
+![](quick-analysis/img/treemap-all-offenses.png)
 
 **How the section hierarchy can be grouped into chapter / section**
 
-![](code/quick-analysis/img/treemap-title-18-offenses.png)
+![](quick-analysis/img/treemap-title-18-offenses.png)
 
 
 ### Code
