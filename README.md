@@ -8,3 +8,8 @@ This repository has analyses in the following structure:
 
 * Each analysis is in its own folder. It's okay for an analysis to produce multiple reports.
 * Its okay to make a new folder, even if your analysis is similar to someone else's.
+
+## Getting started
+
+* See [_to-parquet](./_to-parquet) for the script that converted the raw data to parquet.
+* See [jake-example](./jake-example) for an example analysis.

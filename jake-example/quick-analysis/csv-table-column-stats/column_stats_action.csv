@@ -1,0 +1,284 @@
+table_name,column_name,column_order,data_type,n_rows,pct_with_data,n_records,n_distinct,est_rows_same_value,likely_pii,action
+case_stats,docket_number,1,VARCHAR,584160,1,584160,578028,1.01,FALSE,key
+case_stats,otn,2,VARCHAR,584160,0.997081279101616,582455,562952,1.03,FALSE,key
+case_stats,originating_docket_number,3,VARCHAR,584160,0.9969785675157491,582395,581279,1,FALSE,key
+case_stats,arrest_date,4,DATE,584160,1,584160,14320,40.79,FALSE,date
+case_stats,filed_date,5,DATE,584160,1,584160,13503,43.26,FALSE,date
+case_stats,first_sentence_date,6,TIMESTAMP,584160,1,584160,471952,1.24,FALSE,date
+case_stats,age_at_arrest,7,BIGINT,584160,0.9990430703916735,583601,131,4454.97,FALSE,other
+case_stats,defendant_gender,8,VARCHAR,584160,0.9992074089290606,583697,3,194565.67,FALSE,group: <= 10
+case_stats,defendant_race,9,VARCHAR,584160,0.9954789783620925,581519,8,72689.88,FALSE,group: <= 10
+case_stats,defendant_zip_code,10,VARCHAR,584160,0.9829447411668036,574197,19571,29.34,FALSE,other
+case_stats,county,11,VARCHAR,584160,1,584160,59,9901.02,FALSE,other
+case_stats,total_money_owed,12,DOUBLE,584160,0.4371251027115859,255351,43492,5.87,FALSE,drop: many nulls
+case_stats,current_balance,13,DOUBLE,584160,0.4371251027115859,255351,48147,5.3,FALSE,drop: many nulls
+case_stats,public_defender_ind,14,INTEGER,584160,1,584160,2,292080,FALSE,group: dichotomous
+case_stats,guilty_plea_ind,15,INTEGER,584160,1,584160,2,292080,FALSE,group: dichotomous
+case_stats,probation_eligible_ind,16,INTEGER,584160,1,584160,2,292080,FALSE,group: dichotomous
+case_stats,bail_amount,17,DOUBLE,584160,1,584160,476,1227.23,FALSE,numeric
+case_stats,unable_to_post_ind,18,INTEGER,584160,1,584160,2,292080,FALSE,group: dichotomous
+case_stats,diversionary_ind,19,INTEGER,584160,1,584160,2,292080,FALSE,group: dichotomous
+cpcms_alias_data,docket_number,1,VARCHAR,2643219,1,2643219,767174,3.45,FALSE,key
+cpcms_alias_data,otn,2,VARCHAR,2643219,0.99661738206331,2634278,741411,3.55,FALSE,key
+cpcms_alias_data,defendant_name,3,VARCHAR,2643219,0.9999822186508194,2643172,1178994,2.24,TRUE,other
+cpcms_attorney_data,docket_number,1,VARCHAR,4031373,1,4031373,1467912,2.75,FALSE,key
+cpcms_attorney_data,otn,2,VARCHAR,4031373,0.9986232978193782,4025823,1393788,2.89,FALSE,key
+cpcms_attorney_data,attorney_name,3,VARCHAR,4031373,1,4031373,17317,232.8,FALSE,other
+cpcms_attorney_data,supreme_court_number,4,VARCHAR,4031373,0.6409895586441642,2584068,14585,177.17,FALSE,other
+cpcms_attorney_data,representation_type,5,VARCHAR,4031373,1,4031373,35,115182.09,FALSE,other
+cpcms_attorney_data,attorney_status,6,VARCHAR,4031373,1,4031373,3,1343791,FALSE,group: <= 10
+cpcms_attorney_data,representation_date,7,DATE,4031373,0.998817028342453,4026604,14596,275.87,FALSE,date
+cpcms_attorney_data,attorney_status_date,8,DATE,4031373,1,4031373,14574,276.61,FALSE,date
+cpcms_attorney_data,address,9,VARCHAR,4031373,1,4031373,28139,143.27,FALSE,other
+cpcms_attorney_data,city,10,VARCHAR,4031373,0.9060615328822215,3652672,1534,2381.14,FALSE,other
+cpcms_attorney_data,state,11,VARCHAR,4031373,0.9062359151584336,3653375,47,77731.38,FALSE,other
+cpcms_attorney_data,zip_code,12,VARCHAR,4031373,0.9059131963229401,3652074,5904,618.58,FALSE,other
+cpcms_bail_action_data,docket_number,1,VARCHAR,2161741,1,2161741,1359849,1.59,FALSE,key
+cpcms_bail_action_data,otn,2,VARCHAR,2161741,0.9998875906040547,2161498,1290947,1.67,FALSE,key
+cpcms_bail_action_data,bail_identifier,3,VARCHAR,2161741,1,2161741,1456866,1.48,FALSE,likely key
+cpcms_bail_action_data,bail_type,4,VARCHAR,2161741,0.9842187385075271,2127626,8,265953.25,FALSE,group: <= 10
+cpcms_bail_action_data,bail_set_amount,5,DOUBLE,2161741,1,2161741,1430,1511.71,FALSE,numeric
+cpcms_bail_action_data,bail_percentage,6,VARCHAR,2161741,0.20977536161825122,453480,10,45348,FALSE,drop: many nulls
+cpcms_bail_action_data,bail_action_authority,7,VARCHAR,2161741,0.9999949115088256,2161730,2074,1042.3,FALSE,other
+cpcms_bail_action_data,bail_action,8,VARCHAR,2161741,1,2161741,19,113775.84,FALSE,group: <= 30
+cpcms_bail_action_data,bail_action_date,9,DATE,2161741,0.9997460380313831,2161192,10339,209.03,FALSE,date
+cpcms_bail_action_data,bail_action_created_system,10,VARCHAR,2161741,0.986358680341447,2132252,612,3484.07,FALSE,other
+cpcms_bail_post_data,docket_number,1,VARCHAR,639361,1,639361,567379,1.13,FALSE,key
+cpcms_bail_post_data,otn,2,VARCHAR,639361,0.9997794673118943,639220,547990,1.17,FALSE,key
+cpcms_bail_post_data,bail_identifier,3,VARCHAR,639361,1,639361,587696,1.09,FALSE,likely key
+cpcms_bail_post_data,bail_posting_status,4,VARCHAR,639361,1,639361,4,159840.25,FALSE,group: <= 10
+cpcms_bail_post_data,bail_posting_status_date,5,DATE,639361,1,639361,10010,63.87,FALSE,date
+cpcms_bail_post_data,security_type,6,VARCHAR,639361,0.9999014641180803,639298,14,45664.14,FALSE,group: <= 30
+cpcms_bail_post_data,security_amount,7,DOUBLE,639361,0.9999014641180803,639298,816,783.45,FALSE,numeric
+cpcms_bail_post_data,surety_type,8,VARCHAR,639361,0.9973880170983216,637691,7,91098.71,FALSE,group: <= 10
+cpcms_bail_post_data,surety_name,9,VARCHAR,639361,0.9998889516251382,639290,342401,1.87,FALSE,likely key
+cpcms_bail_post_data,bail_post_created_system,10,VARCHAR,639361,0.9851038771523443,629837,608,1035.92,FALSE,other
+cpcms_calendar_event_data,docket_number,1,VARCHAR,10777682,1,10777682,1424597,7.57,FALSE,key
+cpcms_calendar_event_data,otn,2,VARCHAR,10777682,0.9990348574025473,10767280,1350185,7.97,FALSE,key
+cpcms_calendar_event_data,calendar_event_type,3,VARCHAR,10777682,1,10777682,1597,6748.71,FALSE,other
+cpcms_calendar_event_data,calendar_event_date,4,DATE,10777682,1,10777682,7746,1391.39,FALSE,date
+cpcms_calendar_event_data,calendar_event_location,5,VARCHAR,10777682,0.9116017711415126,9824954,493,19928.91,FALSE,other
+cpcms_calendar_event_data,schedule_status,6,VARCHAR,10777682,0.999999072156703,10777672,6,1796278.67,FALSE,group: <= 10
+cpcms_calendar_event_data,attending_judge,7,VARCHAR,10777682,0.7871158195240869,8483284,1059,8010.66,FALSE,other
+cpcms_case_data,county,1,VARCHAR,1492301,1,1492301,67,22273.15,FALSE,other
+cpcms_case_data,docket_number,2,VARCHAR,1492301,1,1492301,1484536,1.01,FALSE,key
+cpcms_case_data,otn,3,VARCHAR,1492301,0.9980848367722062,1489443,1409861,1.06,FALSE,key
+cpcms_case_data,originating_docket_number,4,VARCHAR,1492301,0.9971969461924907,1488118,1433792,1.04,FALSE,key
+cpcms_case_data,filed_date,5,DATE,1492301,1,1492301,14530,102.7,FALSE,date
+cpcms_case_data,initiation_date,6,DATE,1492301,0.9999993298939021,1492300,14561,102.49,FALSE,date
+cpcms_case_data,arrest_date,7,DATE,1492301,0.5573265715160681,831699,14872,55.92,FALSE,date
+cpcms_case_data,case_status,8,VARCHAR,1492301,1,1492301,5,298460.2,FALSE,group: <= 10
+cpcms_case_data,defendant_name,9,VARCHAR,1492301,1,1492301,837844,1.78,TRUE,likely key
+cpcms_case_data,defendant_gender,10,VARCHAR,1492301,0.9987495820213215,1490435,3,496811.67,FALSE,group: <= 10
+cpcms_case_data,defendant_race,11,VARCHAR,1492301,0.9963211175225374,1486811,8,185851.38,FALSE,group: <= 10
+cpcms_case_data,defendant_dob,12,DATE,1492301,0.9982590643576598,1489703,23818,62.55,TRUE,date
+cpcms_case_data,defendant_zip_code,13,VARCHAR,1492301,0.9822261058593407,1465777,36521,40.14,FALSE,other
+cpcms_diversionary_data,docket_number,1,VARCHAR,205006,1,205006,75763,2.71,FALSE,key
+cpcms_diversionary_data,otn,2,VARCHAR,205006,0.9999658546579124,204999,75646,2.71,FALSE,key
+cpcms_diversionary_data,offense_sequence_number,3,DOUBLE,205006,1,205006,893,229.57,FALSE,numeric
+cpcms_diversionary_data,diversionary_program_type,4,VARCHAR,205006,1,205006,25,8200.24,FALSE,group: <= 30
+cpcms_diversionary_data,program_admission_date,5,DATE,205006,1,205006,3567,57.47,FALSE,date
+cpcms_diversionary_data,program_period_years,6,DOUBLE,205006,0.1433031228354292,29378,11,2670.73,FALSE,drop: many nulls
+cpcms_diversionary_data,program_period_months,7,DOUBLE,205006,0.639356896871311,131072,44,2978.91,FALSE,numeric
+cpcms_diversionary_data,program_period_days,8,DOUBLE,205006,0.023418826766045873,4801,20,240.05,FALSE,drop: many nulls
+cpcms_diversionary_data,program_start_date,9,DATE,205006,1,205006,3616,56.69,FALSE,date
+cpcms_docket_entry_data,docket_number,1,VARCHAR,40790548,1,40790548,1484532,27.48,FALSE,key
+cpcms_docket_entry_data,otn,2,VARCHAR,40790548,0.998757285633917,40739857,1409857,28.9,FALSE,key
+cpcms_docket_entry_data,filed_date,3,DATE,40790548,1,40790548,16269,2507.26,FALSE,date
+cpcms_docket_entry_data,official_docket_entry,4,VARCHAR,40790548,1,40790548,10031,4066.45,FALSE,other
+cpcms_docket_entry_data,filer,5,VARCHAR,40790548,0.9995154514717478,40770783,577196,70.64,FALSE,other
+cpcms_financial_data,docket_number,1,VARCHAR,29194256,1,29194256,1362724,21.42,FALSE,key
+cpcms_financial_data,otn,2,VARCHAR,29194256,0.9993733356315023,29175961,1328896,21.96,FALSE,key
+cpcms_financial_data,assessment_category,3,VARCHAR,29194256,1,29194256,3,9731418.67,FALSE,group: <= 10
+cpcms_financial_data,assessment_type,4,VARCHAR,29194256,1,29194256,4111,7101.5,FALSE,other
+cpcms_financial_data,assessed_amount,5,DOUBLE,29194256,1,29194256,159735,182.77,FALSE,numeric
+cpcms_financial_data,adjusted_amount,6,DOUBLE,29194256,1,29194256,88570,329.62,FALSE,numeric
+cpcms_financial_data,non_monetary_payment_amount,7,DOUBLE,29194256,1,29194256,15272,1911.62,FALSE,numeric
+cpcms_financial_data,payment_amount,8,DOUBLE,29194256,1,29194256,110564,264.05,FALSE,numeric
+cpcms_financial_data,balance,9,DOUBLE,29194256,1,29194256,168154,173.62,FALSE,numeric
+cpcms_offense_data,docket_number,1,VARCHAR,3669335,1,3669335,1484439,2.47,FALSE,key
+cpcms_offense_data,otn,2,VARCHAR,3669335,0.9971419889435007,3658848,1409859,2.6,FALSE,key
+cpcms_offense_data,offense_sequence_number,3,DOUBLE,3669335,1,3669335,4616,794.92,FALSE,numeric
+cpcms_offense_data,title,4,VARCHAR,3669335,1,3669335,45,81540.78,FALSE,other
+cpcms_offense_data,section,5,VARCHAR,3669335,1,3669335,1248,2940.17,FALSE,other
+cpcms_offense_data,sub_section,6,VARCHAR,3669335,0.9217678407667874,3382275,940,3598.16,FALSE,other
+cpcms_offense_data,description,7,VARCHAR,3669335,1,3669335,5381,681.91,FALSE,other
+cpcms_offense_data,offense_date,8,DATE,3669335,0.9999871911395389,3669288,15158,242.07,FALSE,date
+cpcms_offense_data,offense_disposition,9,VARCHAR,3669335,0.9885873053291673,3627458,189,19192.9,FALSE,other
+cpcms_offense_data,offense_disposition_date,10,DATE,3669335,0.9885873053291673,3627458,11083,327.3,FALSE,date
+cpcms_offense_data,lead_offense_indicator,11,VARCHAR,3669335,1,3669335,2,1834667.5,FALSE,group: dichotomous
+cpcms_offense_data,offense_grade,12,VARCHAR,3669335,0.9655954008015076,3543093,19,186478.58,FALSE,group: <= 30
+cpcms_participant_confinement_data,defendant_name,1,VARCHAR,1386972,1,1386972,558422,2.48,TRUE,other
+cpcms_participant_confinement_data,defendant_dob,2,DATE,1386972,0.9993619193466055,1386087,21710,63.85,TRUE,date
+cpcms_participant_confinement_data,confinement_date,3,DATE,1386972,1,1386972,11144,124.46,FALSE,date
+cpcms_participant_confinement_data,confinement_end_date,4,DATE,1386972,0.7909828028251471,1097071,7181,152.77,FALSE,date
+cpcms_participant_confinement_data,confinement_type,5,VARCHAR,1386972,1,1386972,10,138697.2,FALSE,group: <= 10
+cpcms_participant_confinement_data,reporting_institution,6,VARCHAR,1386972,0.992463438339058,1376519,802,1716.36,FALSE,other
+cpcms_participant_confinement_data,confinement_reason,7,VARCHAR,1386972,0.03856674828331069,53491,30,1783.03,FALSE,drop: many nulls
+cpcms_participant_confinement_data,still_in_custody,8,VARCHAR,1386972,1,1386972,2,693486,FALSE,group: dichotomous
+cpcms_payment_plan_data,docket_number,1,VARCHAR,704719,1,704719,704685,1,FALSE,key
+cpcms_payment_plan_data,otn,2,VARCHAR,704719,0.9970229268687235,702621,691312,1.02,FALSE,key
+cpcms_payment_plan_data,payment_plan_frequency,3,VARCHAR,704719,1,704719,8,88089.88,FALSE,group: <= 10
+cpcms_payment_plan_data,due_date,4,DATE,704719,0.9892198166928946,697122,8877,78.53,FALSE,date
+cpcms_payment_plan_data,active,5,VARCHAR,704719,1,704719,1,704719,FALSE,drop: only one value
+cpcms_payment_plan_data,suspended,6,VARCHAR,704719,1,704719,1,704719,FALSE,drop: only one value
+cpcms_payment_plan_data,next_due_amt,7,DOUBLE,704719,1,704719,45047,15.64,FALSE,numeric
+cpcms_payment_plan_data,overdue_amt,8,DOUBLE,704719,1,704719,114897,6.13,FALSE,numeric
+cpcms_related_case_data,docket_number,1,VARCHAR,661978,1,661978,223993,2.96,FALSE,key
+cpcms_related_case_data,related_docket_no,2,VARCHAR,661978,1,661978,282231,2.35,FALSE,key
+cpcms_related_case_data,related_court,3,VARCHAR,661978,1,661978,64,10343.41,FALSE,other
+cpcms_related_case_data,related_case_caption,4,VARCHAR,661978,0.9999939575031195,661974,149187,4.44,FALSE,other
+cpcms_sentence_data,docket_number,1,VARCHAR,2741628,1,2741628,1014414,2.7,FALSE,key
+cpcms_sentence_data,otn,2,VARCHAR,2741628,0.9984086097749221,2737265,999149,2.74,FALSE,key
+cpcms_sentence_data,originating_offense_sequence_number,3,DOUBLE,2741628,1,2741628,2556,1072.62,FALSE,numeric
+cpcms_sentence_data,offense_sequence_number,4,DOUBLE,2741628,1,2741628,2441,1123.16,FALSE,numeric
+cpcms_sentence_data,sentence_type,5,VARCHAR,2741628,1,2741628,7,391661.14,FALSE,group: <= 10
+cpcms_sentence_data,sentence_date,6,TIMESTAMP,2741628,1,2741628,995358,2.75,FALSE,date
+cpcms_sentence_data,sentence_period,7,VARCHAR,2741628,0.7623904483029791,2090191,3158,661.87,FALSE,other
+cpcms_sentence_data,program_type,8,VARCHAR,2741628,0.7886799376137098,2162267,35,61779.06,FALSE,other
+cpcms_sentence_data,effective_sentence_date,9,DATE,2741628,0.32518817286663254,891545,8277,107.71,FALSE,drop: many nulls
+cpcms_sentence_data,min_years,10,DOUBLE,2741628,0.7971391450627145,2185459,47,46499.13,FALSE,numeric
+cpcms_sentence_data,min_months,11,DOUBLE,2741628,0.7986105335953674,2189493,164,13350.57,FALSE,numeric
+cpcms_sentence_data,min_days,12,DOUBLE,2741628,0.7752795054617184,2125528,1056,2012.81,FALSE,numeric
+cpcms_sentence_data,min_hours,13,DOUBLE,2741628,0.7600378315365907,2083741,62,33608.73,FALSE,numeric
+cpcms_sentence_data,max_years,14,DOUBLE,2741628,0.7881040024394265,2160688,63,34296.63,FALSE,numeric
+cpcms_sentence_data,max_months,15,DOUBLE,2741628,0.7896060297020603,2164806,264,8200.02,FALSE,numeric
+cpcms_sentence_data,max_days,16,DOUBLE,2741628,0.7774041554871777,2131353,1053,2024.08,FALSE,numeric
+cpcms_sentence_data,max_hours,17,DOUBLE,2741628,0.7606870808147568,2085521,40,52138.03,FALSE,numeric
+cpcms_sentence_data,sentencing_judge,18,VARCHAR,2741628,1,2741628,1380,1986.69,FALSE,other
+cpcms_sentence_data,sentencing_location,19,VARCHAR,2741628,0.16584087994432506,454674,255,1783.04,FALSE,drop: many nulls
+cpcms_sentence_data,sentencing_event_type,20,VARCHAR,2741628,0.9999792094332273,2741571,988,2774.87,FALSE,other
+cpcms_sentence_data,credit_for_time_served,21,DOUBLE,2741628,0.2624984133514831,719673,1879,383.01,FALSE,drop: many nulls
+cpcms_sentence_data,case_disposition,22,VARCHAR,2741628,0.9999974467725016,2741621,127,21587.57,FALSE,other
+cpcms_sentence_data,offense_disposition,23,VARCHAR,2741628,0.999931792351114,2741441,63,43514.94,FALSE,other
+cpcms_sentence_data,disposing_judge,24,VARCHAR,2741628,1,2741628,1549,1769.93,FALSE,other
+cpcms_sentence_link_data,sentence_link_sort,1,VARCHAR,1392104,1,1392104,1392104,1,FALSE,likely key
+cpcms_sentence_link_data,primary_docket,2,VARCHAR,1392104,1,1392104,410701,3.39,FALSE,key
+cpcms_sentence_link_data,linked_docket,3,VARCHAR,1392104,1,1392104,484007,2.88,FALSE,key
+cpcms_sentence_link_data,link_number,4,VARCHAR,1392104,1,1392104,560,2485.9,FALSE,other
+cpcms_sentence_link_data,short_display_value,5,VARCHAR,1392104,1,1392104,1114657,1.25,FALSE,likely key
+cpcms_sentence_link_data,short_caption,6,VARCHAR,1392104,1,1392104,281291,4.95,FALSE,other
+cpcms_sentence_link_data,sentence_dt,7,DATE,1392104,1,1392104,4978,279.65,FALSE,date
+mdjs_alias_data,docket_number,1,VARCHAR,2433284,1,2433284,773023,3.15,FALSE,key
+mdjs_alias_data,otn,2,VARCHAR,2433284,0.9999358891111765,2433128,772914,3.15,FALSE,key
+mdjs_alias_data,defendant_name,3,VARCHAR,2433284,0.9999991780655278,2433282,1280389,1.9,TRUE,likely key
+mdjs_attorney_data,docket_number,1,VARCHAR,1565695,1,1565695,883727,1.77,FALSE,key
+mdjs_attorney_data,otn,2,VARCHAR,1565695,0.9998556551563363,1565469,883599,1.77,FALSE,key
+mdjs_attorney_data,attorney_name,3,VARCHAR,1565695,1,1565695,9107,171.92,FALSE,other
+mdjs_attorney_data,supreme_court_number,4,VARCHAR,1565695,0.6459086859190327,1011296,8703,116.2,FALSE,other
+mdjs_attorney_data,attorney_role,5,VARCHAR,1565695,1,1565695,16,97855.94,FALSE,group: <= 30
+mdjs_attorney_data,attorney_status,6,VARCHAR,1565695,1,1565695,2,782847.5,FALSE,group: dichotomous
+mdjs_attorney_data,active_date,7,DATE,1565695,0.992990972060331,1554721,3560,436.72,FALSE,date
+mdjs_attorney_data,inactive_date,8,DATE,1565695,0.060510508113010515,94741,2076,45.64,FALSE,drop: many nulls
+mdjs_attorney_data,address,9,VARCHAR,1565695,1,1565695,20079,77.98,FALSE,other
+mdjs_attorney_data,city,10,VARCHAR,1565695,0.9991837490699018,1564417,1126,1389.36,FALSE,other
+mdjs_attorney_data,state,11,VARCHAR,1565695,0.9992616697377203,1564539,24,65189.12,FALSE,group: <= 30
+mdjs_attorney_data,zip_code,12,VARCHAR,1565695,0.9983668594458052,1563138,3704,422.01,FALSE,other
+mdjs_bail_action_data,docket_number,1,VARCHAR,1232986,1,1232986,816364,1.51,FALSE,key
+mdjs_bail_action_data,otn,2,VARCHAR,1232986,0.9999635032352354,1232941,816322,1.51,FALSE,key
+mdjs_bail_action_data,bail_identifier,3,VARCHAR,1232986,1,1232986,891330,1.38,FALSE,likely key
+mdjs_bail_action_data,bail_type,4,VARCHAR,1232986,0.9838157124249586,1213031,7,173290.14,FALSE,group: <= 10
+mdjs_bail_action_data,bail_set_amount,5,DOUBLE,1232986,1,1232986,730,1689.02,FALSE,numeric
+mdjs_bail_action_data,bail_percentage,6,VARCHAR,1232986,0.11347006373146167,139907,9,15545.22,FALSE,drop: many nulls
+mdjs_bail_action_data,bail_action_authority,7,VARCHAR,1232986,1,1232986,1414,871.98,FALSE,other
+mdjs_bail_action_data,bail_action,8,VARCHAR,1232986,1,1232986,21,58713.62,FALSE,group: <= 30
+mdjs_bail_action_data,bail_action_date,9,DATE,1232986,1,1232986,3276,376.37,FALSE,date
+mdjs_bail_action_data,bail_action_created_system,10,VARCHAR,1232986,1,1232986,582,2118.53,FALSE,other
+mdjs_bail_post_data,docket_number,1,VARCHAR,354719,1,354719,314324,1.13,FALSE,key
+mdjs_bail_post_data,otn,2,VARCHAR,354719,0.9999718086710889,354709,314313,1.13,FALSE,key
+mdjs_bail_post_data,bail_identifier,3,VARCHAR,354719,1,354719,332583,1.07,FALSE,likely key
+mdjs_bail_post_data,bail_posting_status,4,VARCHAR,354719,1,354719,2,177359.5,FALSE,group: dichotomous
+mdjs_bail_post_data,bail_posting_status_date,5,DATE,354719,1,354719,2992,118.56,FALSE,date
+mdjs_bail_post_data,security_type,6,VARCHAR,354719,1,354719,9,39413.22,FALSE,group: <= 10
+mdjs_bail_post_data,security_amount,7,DOUBLE,354719,1,354719,433,819.21,FALSE,numeric
+mdjs_bail_post_data,surety_type,8,VARCHAR,354719,1,354719,3,118239.67,FALSE,group: <= 10
+mdjs_bail_post_data,surety_name,9,VARCHAR,354719,1,354719,199433,1.78,FALSE,likely key
+mdjs_bail_post_data,bail_post_created_system,10,VARCHAR,354719,1,354719,571,621.22,FALSE,other
+mdjs_calendar_event_data,docket_number,1,VARCHAR,3299051,1,3299051,956892,3.45,FALSE,key
+mdjs_calendar_event_data,otn,2,VARCHAR,3299051,0.9998787530110932,3298651,956756,3.45,FALSE,key
+mdjs_calendar_event_data,calendar_event_type,3,VARCHAR,3299051,0.9999869659486925,3299008,29,113758.9,FALSE,group: <= 30
+mdjs_calendar_event_data,calendar_event_date,4,DATE,3299051,1,3299051,4356,757.36,FALSE,date
+mdjs_calendar_event_data,calendar_event_location,5,VARCHAR,3299051,0.24719138928134182,815497,709,1150.21,FALSE,drop: many nulls
+mdjs_calendar_event_data,schedule_status,6,VARCHAR,3299051,1,3299051,4,824762.75,FALSE,group: <= 10
+mdjs_calendar_event_data,attending_judge,7,VARCHAR,3299051,0.819471114572039,2703477,1052,2569.85,FALSE,other
+mdjs_case_confinement_data,docket_number,1,VARCHAR,349930,1,349930,329526,1.06,FALSE,key
+mdjs_case_confinement_data,defendant_name,2,VARCHAR,349930,1,349930,237936,1.47,TRUE,likely key
+mdjs_case_confinement_data,confinement_type,3,VARCHAR,349930,1,349930,2,174965,FALSE,group: dichotomous
+mdjs_case_confinement_data,confinement_reason,4,VARCHAR,349930,0.9999971422856,349929,6,58321.5,FALSE,group: <= 10
+mdjs_case_confinement_data,confinement_location,5,VARCHAR,349930,1,349930,125,2799.44,FALSE,other
+mdjs_case_confinement_data,confinement_date,6,DATE,349930,1,349930,3030,115.49,FALSE,date
+mdjs_case_confinement_data,confinement_end_date,7,DATE,349930,0.6214728660017718,217472,2998,72.54,FALSE,date
+mdjs_case_confinement_data,confining_judge,8,VARCHAR,349930,0.9997799559911983,349853,970,360.67,FALSE,other
+mdjs_case_data,county,1,VARCHAR,938595,1,938595,66,14221.14,FALSE,other
+mdjs_case_data,docket_number,2,VARCHAR,938595,1,938595,938595,1,FALSE,key
+mdjs_case_data,otn,3,VARCHAR,938595,0.9998561679957809,938460,938437,1,FALSE,key
+mdjs_case_data,filed_date,4,DATE,938595,1,938595,3994,235,FALSE,date
+mdjs_case_data,initiation_date,5,DATE,938595,1,938595,3997,234.82,FALSE,date
+mdjs_case_data,arrest_date,6,DATE,938595,0.42752624934077,401274,3465,115.81,FALSE,drop: many nulls
+mdjs_case_data,case_status,7,VARCHAR,938595,1,938595,4,234648.75,FALSE,group: <= 10
+mdjs_case_data,defendant_name,8,VARCHAR,938595,1,938595,655452,1.43,TRUE,likely key
+mdjs_case_data,defendant_gender,9,VARCHAR,938595,0.9933549614050788,932358,3,310786,FALSE,group: <= 10
+mdjs_case_data,defendant_race,10,VARCHAR,938595,0.988796019582461,928079,8,116009.88,FALSE,group: <= 10
+mdjs_case_data,defendant_dob,11,DATE,938595,0.9938077658628056,932783,23303,40.03,TRUE,date
+mdjs_case_data,defendant_zip_code,12,VARCHAR,938595,0.985399453438384,924891,23564,39.25,FALSE,other
+mdjs_docket_entry_data,docket_number,1,VARCHAR,7734697,1,7734697,967140,8,FALSE,key
+mdjs_docket_entry_data,otn,2,VARCHAR,7734697,0.9998897177226206,7733844,966979,8,FALSE,key
+mdjs_docket_entry_data,filed_date,3,DATE,7734697,1,7734697,4776,1619.49,FALSE,date
+mdjs_docket_entry_data,official_docket_entry,4,VARCHAR,7734697,1,7734697,136,56872.77,FALSE,other
+mdjs_docket_entry_data,filer,5,VARCHAR,7734697,1,7734697,296933,26.05,FALSE,other
+mdjs_financial_data,docket_number,1,VARCHAR,1341327,1,1341327,233807,5.74,FALSE,key
+mdjs_financial_data,otn,2,VARCHAR,1341327,0.9998896615068511,1341179,233774,5.74,FALSE,key
+mdjs_financial_data,assessment_category,3,VARCHAR,1341327,1,1341327,4,335331.75,FALSE,group: <= 10
+mdjs_financial_data,assessment_type,4,VARCHAR,1341327,1,1341327,147,9124.67,FALSE,other
+mdjs_financial_data,assessed_amount,5,DOUBLE,1341327,1,1341327,14362,93.39,FALSE,numeric
+mdjs_financial_data,adjusted_amount,6,DOUBLE,1341327,1,1341327,15986,83.91,FALSE,numeric
+mdjs_financial_data,non_monetary_payment_amount,7,DOUBLE,1341327,1,1341327,1,1341327,FALSE,drop: only one value
+mdjs_financial_data,payment_amount,8,DOUBLE,1341327,1,1341327,4841,277.08,FALSE,numeric
+mdjs_financial_data,balance,9,DOUBLE,1341327,1,1341327,1970,680.88,FALSE,numeric
+mdjs_offense_data,docket_number,1,VARCHAR,2457249,1,2457249,967142,2.54,FALSE,key
+mdjs_offense_data,otn,2,VARCHAR,2457249,0.9978654991822156,2452004,966981,2.54,FALSE,key
+mdjs_offense_data,offense_sequence_number,3,DOUBLE,2457249,1,2457249,13568,181.11,FALSE,numeric
+mdjs_offense_data,title,4,VARCHAR,2457249,0.9981792646980424,2452775,40,61319.38,FALSE,other
+mdjs_offense_data,section,5,VARCHAR,2457249,0.9981792646980424,2452775,1244,1971.68,FALSE,other
+mdjs_offense_data,sub_section,6,VARCHAR,2457249,0.9483812995752567,2330409,929,2508.51,FALSE,other
+mdjs_offense_data,description,7,VARCHAR,2457249,0.9984889606222243,2453536,4348,564.29,FALSE,other
+mdjs_offense_data,offense_date,8,DATE,2457249,1,2457249,5232,469.66,FALSE,date
+mdjs_offense_data,offense_disposition,9,VARCHAR,2457249,0.9251471869558193,2273317,20,113665.85,FALSE,group: <= 30
+mdjs_offense_data,offense_disposition_date,10,DATE,2457249,0.9251353851400489,2273288,2239,1015.31,FALSE,date
+mdjs_offense_data,lead_offense_indicator,11,VARCHAR,2457249,1,2457249,2,1228624.5,FALSE,group: dichotomous
+mdjs_offense_data,offense_grade,12,VARCHAR,2457249,0.959992251497508,2358940,18,131052.22,FALSE,group: <= 30
+mdjs_offense_data,advised_of_his_right_to_apply_for_assignment_of_counsel,13,VARCHAR,2457249,1,2457249,2,1228624.5,FALSE,group: dichotomous
+mdjs_offense_data,public_defender_requested_by_the_defendant,14,VARCHAR,2457249,1,2457249,2,1228624.5,FALSE,group: dichotomous
+mdjs_offense_data,application_provided_for_appointment_of_public_defender,15,VARCHAR,2457249,1,2457249,2,1228624.5,FALSE,group: dichotomous
+mdjs_payment_plan_data,docket_number,1,VARCHAR,24093,1,24093,23918,1.01,FALSE,key
+mdjs_payment_plan_data,otn,2,VARCHAR,24093,0.9997924708421533,24088,23914,1.01,FALSE,key
+mdjs_payment_plan_data,payment_plan_frequency,3,VARCHAR,24093,1,24093,6,4015.5,FALSE,group: <= 10
+mdjs_payment_plan_data,due_date,4,DATE,24093,0.022620678205287844,545,285,1.91,FALSE,drop: many nulls
+mdjs_payment_plan_data,active,5,VARCHAR,24093,1,24093,2,12046.5,FALSE,group: dichotomous
+mdjs_payment_plan_data,next_due_amt,6,DOUBLE,24093,1,24093,273,88.25,FALSE,numeric
+mdjs_payment_plan_data,overdue_amt,7,DOUBLE,24093,1,24093,253,95.23,FALSE,numeric
+mdjs_sentence_data,docket_number,1,VARCHAR,22868,1,22868,21693,1.05,FALSE,key
+mdjs_sentence_data,otn,2,VARCHAR,22868,1,22868,21693,1.05,FALSE,key
+mdjs_sentence_data,offense_sequence_number,3,DOUBLE,22868,1,22868,30,762.27,FALSE,numeric
+mdjs_sentence_data,penalty_type,4,VARCHAR,22868,1,22868,4,5717,FALSE,group: <= 10
+mdjs_sentence_data,program_type,5,VARCHAR,22868,1,22868,7,3266.86,FALSE,group: <= 10
+mdjs_sentence_data,program_period,6,VARCHAR,22868,0.04937029910792374,1129,7,161.29,FALSE,drop: many nulls
+mdjs_sentence_data,start_date,7,DATE,22868,0.8739723631275145,19986,2285,8.75,FALSE,date
+mdjs_sentence_data,end_date,8,DATE,22868,0.8739723631275145,19986,2967,6.74,FALSE,date
+mdjs_sentence_data,facility_location,9,VARCHAR,22868,0.1602676228791324,3665,93,39.41,FALSE,drop: many nulls
+mdjs_sentence_data,sentencing_judge,10,VARCHAR,22868,1,22868,348,65.71,FALSE,other
+mdjs_sentence_data,penalty_event_type,11,VARCHAR,22868,0.8828931257652615,20190,6,3365,FALSE,group: <= 10
+mdjs_sentence_data,sentence_conditions,12,VARCHAR,22868,0.9209375546615358,21060,16194,1.3,FALSE,likely key
+mdjs_sentence_data,case_disposition,13,VARCHAR,22868,1,22868,5,4573.6,FALSE,group: <= 10
+mdjs_sentence_data,offense_disposition,14,VARCHAR,22868,1,22868,5,4573.6,FALSE,group: <= 10
+mdjs_sentence_data,judge_name,15,VARCHAR,22868,1,22868,350,65.34,FALSE,other
+statute_hierarchy,title_number,1,INTEGER,12905,1,12905,52,248.17,FALSE,other
+statute_hierarchy,title_text,2,VARCHAR,12905,1,12905,53,243.49,FALSE,other
+statute_hierarchy,chapter_number,3,VARCHAR,12905,0.9997675319643549,12902,140,92.16,FALSE,other
+statute_hierarchy,chapter_text,4,VARCHAR,12905,0.9991476172026347,12894,731,17.64,FALSE,other
+statute_hierarchy,offense_section,5,VARCHAR,12905,1,12905,5792,2.23,FALSE,other
+statute_hierarchy,offense_text,6,VARCHAR,12905,0.9996900426191399,12901,9984,1.29,FALSE,likely key
+statute_hierarchy,section_number,7,VARCHAR,12905,1,12905,4931,2.62,FALSE,other
+statute_hierarchy,section_text,8,VARCHAR,12905,0.9996900426191399,12901,9204,1.4,FALSE,likely key
+statute_hierarchy,subsection_number,9,VARCHAR,12905,0.07423479271600154,958,67,14.3,FALSE,drop: many nulls
+statute_hierarchy,subsection_text,10,VARCHAR,12905,0.07423479271600154,958,895,1.07,FALSE,drop: many nulls

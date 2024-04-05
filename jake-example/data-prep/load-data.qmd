@@ -1,0 +1,134 @@
+---
+title: Load Dat into duckdb
+---
+
+```{r}
+# workspace ----
+library(tidyverse)
+library(glue)
+library(duckdb)
+library(janitor)
+
+db_name <- "input/jat-hackathon.duckdb"
+con <- dbConnect(duckdb(), dbdir = db_name)
+
+file_paths <- list.files("input/", pattern = "parquet$", full.names = TRUE)
+
+# statutes ----
+statute_hierarchy <- local({
+  x <- read.csv("../statutes/statute_hierarchy.csv", colClasses = "character")
+  
+  y <- 
+    read.csv("../statutes/statute_hierarchy_manual.csv", colClasses = "character") |>
+    mutate(
+      across(ends_with("text"), ~str_to_sentence(.x)),
+      section_text = 
+        ifelse(
+          is.na(article_number),
+          section_text,
+          glue("Article {article_number} - {article_text}: {section_text}")
+        )
+    ) |> 
+    select(-starts_with("article"))
+  
+  bind_rows(x, y) |> 
+    mutate(
+      across(c(title_number, chapter_number), ~as.integer(.x))
+    )
+})
+
+dbWriteTable(con, "statute_hierarchy", statute_hierarchy, overwrite = TRUE)
+
+# everything else ----
+#' @examples
+#' add_parquet(file = "input/CPCMS_SentenceData.parquet")
+add_parquet <- function(file, overwrite = TRUE) {
+  
+  table_name <-
+    basename(file) |>
+    tools::file_path_sans_ext() |>
+    janitor::make_clean_names()
+
+  already_exists <- dbExistsTable(con, table_name)
+
+  if (already_exists) {
+    if (overwrite) {
+      dbRemoveTable(con, table_name)
+    } else {
+      return(invisible())
+    }
+  }
+  
+  orig_names <- arrow::open_dataset(file) |> names()
+
+  col_specs <-
+    tibble(
+      old = orig_names,
+      new = janitor::make_clean_names(old),
+      type = 
+        case_when(
+          .default = "varchar",
+          # dates
+          new == "sentence_date" ~ "timestamp",
+          str_detect(new, "(date|dt|dob)$") ~ "date",
+          # likely numeric
+          str_detect(
+            new, 
+            "am(oun)?t|balance|credit|(day|hour|month|year)s|indicator|^(max|min)|(?<!(court|docket|link)_)number"
+          ) ~ "double"
+        )
+    ) |> 
+    filter(new != "sentence_conditions") # occurs in sentence_data
+  
+  
+  append_statement <- # error in 1 row, need group by for sentencing data
+   ifelse(
+     test = !str_detect(table_name, "sentence_data"),
+     yes = "",
+     no = glue(
+       "where 
+            not (
+              DocketNumber = 'CP-36-CR-0002237-2016'
+              and OTN = 'T7815776'
+              and OriginatingOffenseSequenceNumber = 4                                        
+              and OffenseSequenceNumber = 2
+            )
+      group by 
+      {group_cols}", # changes from 5M to 2.7M  arrow::open_dataset(file) |> nrow()
+       group_cols = glue("\t{col_specs$old}") |> glue_collapse(",\n")
+     )
+   )
+  
+  ctas <- # [C]reate [T]able [as]
+    glue(
+      "create table {table_name} as 
+      select 
+      {select_cols}
+      from {parquet_file}
+      {append_statement}",
+      parquet_file = glue("read_parquet('{file}', hive_partitioning = true)"),
+      select_cols = 
+        col_specs |> 
+        glue_data("\t{old}::{type} as {new}") |> 
+        glue_collapse(",\n")
+    )
+  
+  dbSendStatement(con, statement = ctas)
+}
+
+## write ----
+
+map(
+  .x = file_paths,
+  .f =
+    ~ add_parquet(
+      file = .x,
+      overwrite = TRUE
+    ),
+  .progress = TRUE
+)
+
+dbListTables(con)
+```
+
+

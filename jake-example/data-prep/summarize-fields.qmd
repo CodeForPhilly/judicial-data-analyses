@@ -1,0 +1,416 @@
+---
+title: "Table / Column Summary"
+execute:
+    eval: false
+format:
+    html: default
+---
+
+```{r workspace}
+library(tidyverse)
+library(dbplyr)
+library(glue)
+library(duckdb)
+
+db_name <- "output/jat-hackathon.duckdb"
+fields_of_interest <- # original_name = alias
+  c(
+    "docket(?!_entry)" = "docket",
+    "otn" = "otn"
+  )
+
+
+con <-
+  dbConnect(
+    drv = duckdb(), 
+    dbdir = db_name
+  )
+
+info_cols <- 
+  tbl(con, "information_schema.columns") |> 
+  select(table_name, column_name, ordinal_position, data_type) |> 
+  collect()
+```
+
+
+```{r table-cols}
+info_cols |> 
+  count(column_name, sort = TRUE) |> 
+  head() |> 
+  knitr::kable()
+```
+
+|column_name             |  n|
+|:-----------------------|--:|
+|docket_number           | 25|
+|otn                     | 23|
+|defendant_name          |  6|
+|offense_sequence_number |  5|
+|bail_identifier         |  4|
+|filed_date              |  4|
+
+```{r likely-keys}
+count_cols_of_interest <- 
+  info_cols |> 
+  group_by(table_name) |> 
+  summarise(
+    # TODO: soft code?
+    #cols = map(fields_of_interest, ~max(column_name == .x))  
+    docket_number = max(str_detect(column_name, "docket(?!_entry)")),
+    otn = max(column_name == "otn")
+  ) |> 
+  mutate(total = docket_number + otn) |> # TODO: use rowsums?
+  arrange(total)
+
+count_cols_of_interest |> 
+  head() |> 
+  knitr::kable()
+```
+
+  
+|table_name                         | docket_number| otn| total|
+|:----------------------------------|-------------:|---:|-----:|
+|cpcms_participant_confinement_data |             0|   0|     0|
+|cpcms_related_case_data            |             1|   0|     1|
+|cpcms_sentence_link_data           |             1|   0|     1|
+|mdjs_case_confinement_data         |             1|   0|     1|
+|cpcms_alias_data                   |             1|   1|     2|
+|cpcms_attorney_data                |             1|   1|     2|
+
+```{r prepare-queries}
+tbl_stats <- # ~1 min
+  count_cols_of_interest |> 
+  filter(total == 2) |> 
+  pull(table_name) |> 
+  map_dfr(
+    .f =
+      ~tbl(con, .x) |> # <--- duckdb 
+      summarise(
+        n_rows = n(),
+        # TODO: soft code?
+        n_docket = n_distinct(docket_number),
+        n_otn = n_distinct(otn)
+      ) |> 
+      mutate(
+        .before = everything(),
+        table_name = .x
+      ) |> 
+      collect()
+  )
+
+write_csv(tbl_stats, "output/table_stats.csv")
+
+tbl_stats |>
+  head() |> 
+  knitr::kable(
+    format.args = list(big.mark = ',')
+  )
+
+```
+
+# number of 
+
+|table_name                |          n|   n_docket|     n_otn|
+|:-------------------------|----------:|----------:|---------:|
+|cpcms_alias_data          |  2,643,219|    767,174|   741,411|
+|cpcms_attorney_data       |  4,031,373|  1,467,912| 1,393,788|
+|cpcms_bail_action_data    |  2,161,741|  1,359,849| 1,290,947|
+|cpcms_bail_post_data      |    639,361|    567,379|   547,990|
+|cpcms_calendar_event_data | 10,777,682|  1,424,597| 1,350,185|
+|cpcms_case_data           |  1,492,301|  1,484,536| 1,409,861|
+
+### Tables missing  
+```{r}
+info_cols
+```
+
+```{r}
+col_stat_prep <-
+  info_cols |>
+  #filter(table_name %in% tbl_stats$table_name) |> 
+  #filter(data_type == "VARCHAR") |>
+  group_by(table_name, column_name) |>
+  summarise(
+    query =
+      glue(
+        "select
+            '{table_name}' as table_name,
+            '{column_name}' as column_name,
+            {ordinal_position} as column_order,
+            '{data_type}' as data_type,
+            sum(case when {column_name} is not null then 1 else 0 end) as n_with_data,
+            count(distinct {column_name}) as n_distinct,
+            n_with_data / count(*) as pct_with_data
+          from
+            {table_name}"
+      ) #|> 
+      #as.character() |> 
+      #str_remove_all("\n")
+  )
+
+col_stats <- # ~20s
+  map_dfr(
+    .x = col_stat_prep$query,
+    .f = ~dbGetQuery(conn = con, statement = .x) # <--- duckdb
+  ) |> 
+  as_tibble()
+
+write_csv(col_stats, "output/column_stats.csv")
+
+col_stats |>
+  arrange(table_name, column_order) |> #view()
+  filter(table_name == "cpcms_diversionary_data") |> 
+  knitr::kable(
+    digits = 2,
+    format.args = list(big.mark = ',')
+  )
+
+```
+
+|table_name              |column_name               | column_order|data_type | n_with_data| n_distinct| pct_with_data|
+|:-----------------------|:-------------------------|------------:|:---------|-----------:|----------:|-------------:|
+|cpcms_diversionary_data |docket_number             |            1|VARCHAR   |     205,006|     75,763|          1.00|
+|cpcms_diversionary_data |otn                       |            2|VARCHAR   |     204,999|     75,646|          1.00|
+|cpcms_diversionary_data |offense_sequence_number   |            3|DOUBLE    |     205,006|        893|          1.00|
+|cpcms_diversionary_data |diversionary_program_type |            4|VARCHAR   |     205,006|         25|          1.00|
+|cpcms_diversionary_data |program_admission_date    |            5|VARCHAR   |     205,006|      3,567|          1.00|
+|cpcms_diversionary_data |program_period_years      |            6|DOUBLE    |      29,378|         11|          0.14|
+|cpcms_diversionary_data |program_period_months     |            7|DOUBLE    |     131,072|         44|          0.64|
+|cpcms_diversionary_data |program_period_days       |            8|DOUBLE    |       4,801|         20|          0.02|
+|cpcms_diversionary_data |program_start_date        |            9|VARCHAR   |     205,006|      3,616|          1.00|
+
+```{r}
+col_stat_action <- 
+  col_stats |> 
+  left_join(tbl_stats |> select(table_name, n_rows)) |> 
+  relocate(n_rows, .after = data_type) |> 
+  mutate(est_rows_same_value = round(n_with_data / n_distinct, 2)) |> 
+  mutate(
+    likely_pii = str_detect(column_name, "dob|defendant_name"),
+    action = 
+      case_when(
+        n_distinct == 1 ~ "drop: only one value",
+        pct_with_data < 0.5 ~ "drop: many nulls",
+        # TODO: fix date & percentage data types in DB
+        str_detect(column_name, "date|dt") | data_type == "DATE" ~ "date",
+        str_detect(column_name, "percentage") | data_type == "DOUBLE" ~ "numeric",
+        # keys
+        str_detect(column_name, "otn|docket(?!_entry)") ~ "key",
+        est_rows_same_value <= 2 ~ "likely key",
+        str_detect(column_name, "identifier") ~ "likely key",
+        # groups
+        n_distinct == 2 ~ "group: dichotomous",
+        n_distinct <= 10 ~ "group: <= 10",
+        n_distinct <= 30 ~ "group: <= 30",
+        .default = "other"
+      )
+  )
+  
+write_csv(col_stat_action, "output/column_stats_action.csv")
+```
+
+```{r}
+col_stat_action <- read_csv("output/column_stats_action.csv")
+
+col_stat_action |> 
+  filter(is.na(n_rows)) |> 
+  group_by(table_name) |> 
+  arrange(column_name) |> 
+  summarise(cols = glue_collapse(column_name, "\n")) |> 
+  pander::pandoc.table(
+    justify = "left",
+    style = "grid"
+  )
+```
+
+### These returned no rows (NA) and were likely not read into duckdb correctly
+
++------------------------------------+--------------------------------+
+| table_name                         | cols                           |
++====================================+================================+
+| cpcms_participant_confinement_data | confinement_date               |
+|                                    | confinement_end_date           |
+|                                    | confinement_reason             |
+|                                    | confinement_type defendant_dob |
+|                                    | defendant_name                 |
+|                                    | reporting_institution          |
+|                                    | still_in_custody               |
++------------------------------------+--------------------------------+
+| cpcms_related_case_data            | docket_number                  |
+|                                    | related_case_caption           |
+|                                    | related_court                  |
+|                                    | related_docket_no              |
++------------------------------------+--------------------------------+
+| cpcms_sentence_link_data           | link_number linked_docket      |
+|                                    | primary_docket sentence_dt     |
+|                                    | sentence_link_sort             |
+|                                    | short_caption                  |
+|                                    | short_display_value            |
++------------------------------------+--------------------------------+
+| mdjs_case_confinement_data         | confinement_date               |
+|                                    | confinement_end_date           |
+|                                    | confinement_location           |
+|                                    | confinement_reason             |
+|                                    | confinement_type               |
+|                                    | confining_judge defendant_name |
+|                                    | docket_number                  |
++------------------------------------+--------------------------------+
+
+
+```{r}
+col_stat_action |> 
+  drop_na(n_rows) |> 
+  select(table_name, column_name, n_distinct, likely_pii, action) |> 
+  ggplot(aes(y = action, fill = likely_pii)) +
+  geom_bar() +
+  #scale_x_log10() +
+  facet_wrap(
+    ~table_name
+  ) +
+  theme_gray(base_size = 8) +
+  theme(
+    panel.background = element_rect("white", "grey80")
+  ) +
+  labs(
+    y = "guess"
+  )
+  
+```
+
+```{r}
+
+column_network <- 
+  col_stat_action |> 
+  filter(
+    # str_detect(column_name, "docket"),
+    str_detect(action, "key")
+  ) |> 
+  mutate(
+    column_name = 
+      str_replace_all(
+        column_name, 
+        "(linked|originating|primary|related)_docket.*", 
+        "docket_number"
+      )
+  ) |> 
+  group_by(column_name) |> 
+  filter(n() >= 2) |> 
+  ungroup()
+
+
+column_network |> 
+  filter(column_name == "docket_number") |> 
+  group_by(table_name) |> 
+  filter(n_distinct == max(n_distinct)) |> 
+  ungroup() |> 
+  mutate(
+    facet = str_extract(table_name, "^[a-z]+") |> fct_rev(),
+    table_name = 
+      str_remove_all(table_name, "^[a-z]+_|_data") |> 
+      fct_reorder(n_distinct, max)
+  ) |> 
+  ggplot(aes(y = table_name)) +
+  geom_col(aes(x = n_with_data, fill = "total rows")) +
+  geom_col(aes(x = n_distinct, fill = "distinct docket #")) +
+  scale_fill_manual(values = c("cadetblue", "grey80")) +
+  scale_x_continuous(
+    expand = expansion(0),
+    labels = scales::number_format(scale_cut = scales::cut_short_scale())
+  ) +
+  facet_grid(
+    cols = vars(facet),
+    scales = "free",
+    space = "free"
+  ) +
+  theme(
+    text = element_text(color = "grey30"),
+    axis.ticks.y = element_blank(),
+    legend.position = "bottom",
+    panel.background = element_blank(),
+    plot.title.position = "plot"
+  ) +
+  labs(
+    title = "Unique docket number in relation to total records",
+    x = "# rows with docket number",
+    y = "table name",
+    fill = NULL
+  )
+
+ggsave("img/docket-number-distribution.png", width = 7, height = 4)
+```
+
+## Following one docket
+
+```{r}
+example_dockets <- 
+  dbGetQuery(
+    conn = con,
+    "select sd.docket_number
+    from 
+      cpcms_sentence_data             sd
+      inner join cpcms_financial_data cp on cp.otn = sd.otn
+      inner join cpcms_alias_data     al on al.otn = sd.otn
+    group by 1
+    limit 10"
+  )
+
+example_dockets |> 
+  knitr::kable()
+```
+
+|docket_number         |
+|:---------------------|
+|CP-22-CR-0001869-2021 |
+|CP-22-CR-0001875-2015 |
+|CP-22-CR-0001876-2018 |
+|CP-22-CR-0001881-2017 |
+|CP-22-CR-0001886-2018 |
+|CP-22-CR-0001887-2018 |
+|CP-22-CR-0001891-2016 |
+|CP-22-CR-0001893-2019 |
+|CP-22-CR-0001894-2018 |
+|CP-22-CR-0001896-2019 |
+
+```{r}
+docket_queries <- 
+  info_cols |> 
+  filter(
+    str_detect(table_name, "cpcms"),
+    column_name == "docket_number"
+  ) |> 
+  transmute(
+    table_name,
+    query = 
+      glue(
+        "select 
+         '{table_name}' as table_name,
+          * 
+        from {table_name} 
+        where docket_number = 'CP-22-CR-0001869-2021'"
+      ) |> 
+      as.character()
+  )
+
+docket_results <- 
+  map(
+    .x = set_names(docket_queries$query, docket_queries$table_name),
+    .f = 
+      ~dbGetQuery(con, .x) |> 
+      as_tibble() |> 
+      arrange()
+  )
+
+write_rds(docket_results, "output/docket_results.Rds")
+
+
+docket_results
+
+```
+
+
+
+```{r}
+duckdb::duckdb_shutdown(duckdb())
+, "select * from cpms_sentence_data") |> head()
+```
+
