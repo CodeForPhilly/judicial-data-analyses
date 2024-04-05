@@ -1,6 +1,7 @@
 # jat-data-analyses
 
-Data analyses for the JAT docket data.
+Data analyses for judge docket data.
+See the [pm0kjp/pa-judicial-data](https://github.com/pm0kjp/pa-judicial-data) for an explanation of the docket data, and context on the problem as a whole.
 
 ## Accessing data
 
