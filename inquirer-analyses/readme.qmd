@@ -1,0 +1,206 @@
+---
+title: Inquirer Analyses Reproduced
+jupyter: python3
+format:
+  html:
+    toc: true
+    code-fold: true
+---
+
+
+```{python}
+import polars as pl
+import polars.selectors as cs
+from plotnine import *
+
+sentences = pl.read_parquet("../_to-parquet/out/CPCMS_SentenceData.parquet")
+cases = pl.read_parquet("../_to-parquet/out/CPCMS_CaseData.parquet")
+offenses = pl.read_parquet("../_to-parquet/out/CPCMS_OffenseData.parquet")
+
+case_sentences = (
+    sentences.join(cases, "DocketNumber")
+    .join(
+        offenses
+        .select(
+            "DocketNumber", "OTN", "OffenseSequenceNumber",
+            cs.by_name(
+                "Title",
+                "Section", 
+                "SubSection"
+            ).name.prefix("Offense")
+        ),
+        ["DocketNumber", "OTN", "OffenseSequenceNumber"]
+    )
+)
+```
+
+## Offense descriptions
+
+Note that descriptions are not always consistent.
+
+```{python}
+with pl.Config(fmt_str_lengths=500):
+    display(offenses
+    .group_by("Title", "Section", "SubSection", "Description")
+    .agg(pl.count())
+    .filter(pl.col("Description").str.starts_with("Retail"))
+    .sort("count", descending=True)
+    )
+```
+
+### How many cases are in each county?
+
+```{python}
+case_sentences.group_by("County").agg(pl.count())
+```
+
+
+
+```{python}
+sentences.group_by("SentencingJudge").agg(pl.count())
+
+```
+
+## Retail probation/parole durations
+
+### What are the different OffenseDispositions?
+
+```{python}
+retail_case_sentences = (
+    case_sentences
+    .filter(
+        #pl.col("SentencingJudge").str.starts_with("Baldi, Robert"),
+        pl.col("OffenseTitle") == "18",
+        pl.col("OffenseSection") == "3929"
+    )
+)
+
+ggplot(
+    retail_case_sentences
+        .group_by("OffenseDisposition")
+        .agg(pl.count())
+    , aes("OffenseDisposition", "count")) + geom_col() + theme(axis_text_x = element_text(angle = 45, hjust=1)
+)
+```
+
+### Comparing min and max probation/parole duration
+
+```{python}
+from IPython.display import display, HTML
+
+expr_prob_or_parole = pl.col("SentenceType").is_in(["Probation", "Parole"])
+
+#with pl.Config(fmt_str_lengths=500):
+#    display(
+retail_probation_lengths = (
+    retail_case_sentences
+    .filter(
+        expr_prob_or_parole,
+        #~pl.col("SentencePeriod").str.ends_with("Months")
+        #(pl.col("MinYears") != 0) | (pl.col("MinDays") != 0) | (pl.col("MinHours") != 0)
+    )
+    .with_columns(
+        min_dur_hours = pl.col("MinYears")*365*24 + pl.col("MinMonths")*30*24 + pl.col("MinDays")*24 + pl.col("MinHours"),
+        max_dur_hours = pl.col("MaxYears")*365*24 + pl.col("MaxMonths")*30*24 + pl.col("MaxDays")*24 + pl.col("MaxHours"),
+    )
+    .with_columns(
+        min_dur_years = pl.col("min_dur_hours") / (24*365),
+        max_dur_years = pl.col("max_dur_hours") / (24*365)
+    )
+)
+
+(
+    retail_probation_lengths
+    >> ggplot(aes("min_dur_years", "max_dur_years"))
+    + geom_point()
+)
+```
+
+
+```{python}
+#retail_probation_lengths.filter(pl.col("max_dur_years") > 20)
+```
+
+
+### Top 5 Philly judges max probation/parole
+
+```{python}
+TO_KEEP =[
+    'Means, Rayford A.',
+    'Palumbo, Frank',
+    'Coleman, Robert P.',
+    'DiClaudio, Scott',
+    'Erdos, Michael'
+] 
+
+(
+retail_probation_lengths
+    .group_by("SentencingJudge", "County")
+    .agg(pl.count(), cs.ends_with("dur_years").mean())
+    #.filter(pl.col("County") == "Philadelphia")
+    .sort("count", descending=True)
+)
+
+```
+
+```{python}
+(
+    retail_probation_lengths
+    .filter(pl.col("SentencingJudge").is_in(TO_KEEP))
+    #.filter(pl.col("SentenceDate").str.to_date().dt.year == 2013)
+    >> ggplot(aes("SentencingJudge", "max_dur_years")) + geom_boxplot()
+)
+
+```
+
+### Raymond Means max probation/parole years over time
+
+```{python}
+(
+    retail_probation_lengths
+    .filter(pl.col("SentencingJudge") == 'Means, Rayford A.')
+    .with_columns(
+        year = pl.col("SentenceDate").str.to_datetime().dt.year()
+    )
+    >> ggplot(aes("year", "max_dur_years", group="year")) + geom_boxplot()
+)
+```
+
+### Raymond Means probation sentences by year
+
+```{python}
+(
+    retail_probation_lengths
+    .filter(
+        pl.col("SentencingJudge").str.starts_with("Means"))
+    .group_by("SentencingJudge", pl.col("SentenceDate").str.to_datetime().dt.year())
+    .agg(pl.count())
+    >> ggplot(aes("SentenceDate", "count")) + geom_line()
+)
+```
+
+## Dump probation data as JSON
+
+The format the polars like to output json in is like this:
+
+```
+{
+  "columns": [
+    {"name":"DocketNumber",
+     "datatype":"String",
+     "bit_settings":"",
+     "values":["SOME VALUE", ...]
+    },
+    ...
+  ]
+}
+```
+
+
+```{python}
+(
+    retail_probation_lengths
+    .filter(pl.col("County") == "Philadelphia")
+    .write_json("probation_durations_philadelphia.json")
+)
+```
