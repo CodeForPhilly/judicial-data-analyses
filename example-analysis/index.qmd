@@ -1,0 +1,25 @@
+---
+title: Example Analysis
+jupyter: python3
+format:
+  html:
+    toc: true
+---
+
+## Analysis
+
+```{python}
+import polars as pl
+from plotnine import *
+
+df = pl.read_parquet("../_to-parquet/out/MDJS_SentenceData.parquet")
+cases = pl.read_parquet("../_to-parquet/out/MDJS_CaseData.parquet")
+
+(
+    df
+    .join(cases, "DocketNumber")
+    .group_by("PenaltyType", "DefendantGender")
+    .agg([pl.count()])
+    >> ggplot(aes("PenaltyType", "count", fill="DefendantGender")) + geom_col() 
+)
+```
